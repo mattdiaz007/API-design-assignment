@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: Movie Ticket Payment API
+  version: 1.0.0
+  description: >
+    This API handles secure payment processing for online movie ticket purchases.
+    It allows clients to create, retrieve, and delete payment transactions.
+
+paths:
+  /payments:
+    post:
+      summary: Create a new payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookingId:
+                  type: string
+                  example: "BKG12345"
+                cardNumber:
+                  type: string
+                  example: "4111111111111111"
+                expirationDate:
+                  type: string
+                  example: "12/27"
+                cvv:
+                  type: string
+                  example: "123"
+      responses:
+        '201':
+          description: Payment successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: string
+                    example: "PMT56789"
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid payment information
+        '402':
+          description: Payment declined
+
+  /payments/{paymentId}:
+    get:
+      summary: Retrieve payment details
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: string
+                  status:
+                    type: string
+                    example: "success"
+                  amount:
+                    type: number
+                    example: 25.00
+        '404':
+          description: Payment not found
+
+    delete:
+      summary: Cancel or delete a payment record
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment deleted successfully
+        '404':
+          description: Payment not found
+        '500':
+          description: Internal server error
